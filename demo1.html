@@ -21,22 +21,19 @@
           <div class="form-group col-md-4">
             <label for="total_players" class="col col-form-label">Total players</label>
             <div class="col">
-              <textarea id='total_players' class="form-control" rows="9">นุ้ย
-ดิว
-ซีน
-โอ๊ค
-บอล
-พี่สัน
-พี่หนุ่ม
-นุ่น
-เต้</textarea>
+              <input type="number" class="form-control" id="total_players" placeholder="Enter players amount" value='9'>
             </div>
           </div>
           <div class="form-group col-md-4">
             <label for="match_players" class="col col-form-label">In-match players ( exclude goalkeeper )</label>
             <div class="col">
               <input type="number" class="form-control" id="match_players" placeholder="Enter players amount" value='6'>
-              <button type="button" id='btn_render' class="btn btn-primary mt-2">Submit</button>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label class="col col-form-label invisible">_</label>
+            <div class="col">
+              <button type="button" id='btn_render' class="btn btn-primary">Submit</button>
             </div>
           </div>
         </div>
@@ -60,8 +57,7 @@
 
       $('#btn_render').click(() => {
 
-        let player_list = $('#total_players').val().trim().split('\n');
-        let total = player_list.length;
+        let total = +$('#total_players').val();
         let match = +$('#match_players').val();
         let nuyie = new Nuyie(total, match);
 
@@ -71,27 +67,20 @@
           return;
         }
 
-        // loop 10 matches
-        let log = [];
-        let html = "<tr>";
-            html += "<th></th>";
-        for(let m=1; m<=match_n; m++){
-          // collect log
-          let players = nuyie.next();
-          log.push(players);
-          // draw header
-          html += `<th class='text-center'>#${m}</th>`;
+        // draw header row
+        let html = "<tr><th></th>";
+        for(let i=1; i<=total; i++){
+          html += `<th class='text-center'>#${i}</th>`;
         }
         html += '</tr>';
         $('table').html(html);
 
-        // loop players
-        html = '';
-        for(let p=1; p<=total; p++){
-          html = '<tr>';
-          html += `<td>${player_list[p-1]}</td>`;
-          for(let m=0; m<match_n; m++){
-            let mark = log[m].includes(p) ? '✓' : '';
+        // render each match
+        for(let match_no=1; match_no<=match_n; match_no++){
+          let html = `<tr><td width='120'>Match ${match_no}</td>`;
+          let players = nuyie.next();
+          for(let i=1; i<=total; i++){
+            let mark = players.includes(i) ? '✓' : '';
             html += `<td class='text-center'>${mark}</td>`;
           }
           html += '</tr>';
