@@ -15,21 +15,31 @@
     <div class='container'>
 
       <h1>Nuyie Algorithm</h1>
-      <h3>Case Total 9 Players, In-match 6 (excluded goalkeeper)</h3>
-      <table class='table'>
-        <tr>
-          <th>Match No</th>
-          <th>#1</th>
-          <th>#2</th>
-          <th>#3</th>
-          <th>#4</th>
-          <th>#5</th>
-          <th>#6</th>
-          <th>#7</th>
-          <th>#8</th>
-          <th>#9</th>
-        </tr>
-      </table>
+
+      <form>
+        <div class='form-row'>
+          <div class="form-group col-md-4">
+            <label for="total_players" class="col col-form-label">Total players</label>
+            <div class="col">
+              <input type="number" class="form-control" id="total_players" placeholder="Enter players amount" value='9'>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="match_players" class="col col-form-label">In-match players ( exclude goalkeeper )</label>
+            <div class="col">
+              <input type="number" class="form-control" id="match_players" placeholder="Enter players amount" value='6'>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label class="col col-form-label invisible">_</label>
+            <div class="col">
+              <button type="button" id='btn_render' class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <table class='table table-bordered'></table>
 
     </div>
 
@@ -43,21 +53,43 @@
     <script src='./nuyie.algorithm.js'></script>
     <script>
 
-      let total = 9;
-      let match = 6;
       let match_n = 10;
-      let nuyie = new Nuyie(9, 6);
 
-      for(let match_no=1; match_no<=match_n; match_no++){
-        let html = `<tr><td>${match_no}</td>`;
-        let players = nuyie.next();
+      $('#btn_render').click(() => {
+
+        let total = +$('#total_players').val();
+        let match = +$('#match_players').val();
+        let nuyie = new Nuyie(total, match);
+
+        // validate input
+        if(nuyie.gap < 0){
+          alert('Total players are not enough to play');
+          return;
+        }
+
+        // draw header row
+        let html = "<tr><th></th>";
         for(let i=1; i<=total; i++){
-          let mark = players.includes(i) ? 'X' : '';
-          html += `<td>${mark}</td>`;
+          html += `<th class='text-center'>#${i}</th>`;
         }
         html += '</tr>';
-        $('table').append(html);
-      }
+        $('table').html(html);
+
+        // render each match
+        for(let match_no=1; match_no<=match_n; match_no++){
+          let html = `<tr><td width='120'>Match ${match_no}</td>`;
+          let players = nuyie.next();
+          for(let i=1; i<=total; i++){
+            let mark = players.includes(i) ? '✓' : '';
+            html += `<td class='text-center'>${mark}</td>`;
+          }
+          html += '</tr>';
+          $('table').append(html);
+        }
+      });
+
+      // render table
+      $('#btn_render').click();
 
     </script>
   </body>
